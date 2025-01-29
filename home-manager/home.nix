@@ -3,8 +3,8 @@
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
-  home.username = "juan";
-  home.homeDirectory = "/home/juan";
+  home.username = "$USER";
+  home.homeDirectory = "/home/$USER";
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -22,6 +22,7 @@
     lazygit
     gh
     podman
+    nixfmt-rfc-style
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -63,44 +64,45 @@
   programs.home-manager.enable = true;
   programs.direnv.enable = true;
   programs.bash = {
-  enable = true;
-  enableCompletion = true;
+    enable = true;
+    enableCompletion = true;
   };
   programs.starship = {
-  enable = true;
+    enable = true;
   };
   programs.zoxide.enable = true;
   programs.keychain = {
-  enable = true;
-  keys = [
-   "id_ed25519"
-   "id_ed25519_finanssoreal"
-  ];
+    enable = true;
+    keys = [
+      "id_ed25519"
+      "id_ed25519_finanssoreal"
+    ];
   };
-programs.git = {
-      enable = true;
-      userName = "JuanAntonioSantiago015";
-      userEmail = "juanantoniosantiago92@gmail.com";
-      extraConfig = {
-        # Sign all commits using ssh key
-        commit.gpgsign = true;
-        gpg.format = "ssh";
-        user.signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOmmPTB06PiqnXWbpnaldS/X8B+SM2ps/384Yp+qWI4h juanantoniosantiago92@gmail.com";
-      };
-      aliases = {
-        "subup" = "submodule update --init --recursive";
-        "co" = "checkout";
-        "cob" = "checkout -b";
-        "br" = "branch";
-        "st" = "status";
-        "cm" = "commit -m";
-        "amend" = "commit --amend -m";
-        "po" = "push origin";
-        "cp" = "cherry-pick";
-        "gone" = "! git fetch -p && git for-each-ref --format '%(refname:short) %(upstream:track)' | awk '$2 == \"[gone]\" {print $1}' | xargs -r git branch -D";
-        "rmcache" = "rm -rf --cached .";
-    
-      };
-    
+  programs.git = {
+    enable = true;
+    userName = "$GIT_USER";
+    userEmail = "$GIT_EMAIL";
+    extraConfig = {
+      # Sign all commits using ssh key
+      commit.gpgsign = true;
+      gpg.format = "ssh";
+      user.signingkey = "$SSH_PUB_KEY";
     };
+    aliases = {
+      "subup" = "submodule update --init --recursive";
+      "co" = "checkout";
+      "cob" = "checkout -b";
+      "br" = "branch";
+      "st" = "status";
+      "cm" = "commit -m";
+      "amend" = "commit --amend -m";
+      "po" = "push origin";
+      "cp" = "cherry-pick";
+      "gone" =
+        "! git fetch -p && git for-each-ref --format '%(refname:short) %(upstream:track)' | awk '$2 == \"[gone]\" {print $1}' | xargs -r git branch -D";
+      "rmcache" = "rm -rf --cached .";
+
+    };
+
+  };
 }
