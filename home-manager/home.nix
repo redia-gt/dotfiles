@@ -19,6 +19,8 @@
   # environment.
   home.packages = with pkgs; [
     awscli2
+    lazygit
+    gh
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -67,4 +69,11 @@
   enable = true;
   };
   programs.zoxide.enable = true;
+  programs.keychain = {
+  enable = true;
+  keys = [
+   "id_ed25519"
+   "id_ed25519_finanssoreal"
+  ];
+  };
 }
