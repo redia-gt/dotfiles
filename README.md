@@ -5,5 +5,5 @@
 
 # SCRIPT DE INSTALACIÓN DE HOME MANAGER
 ```bash
-bash -c "$(curl -sL https://raw.githubusercontent.com/redia-gt/dotfiles/refs/heads/main/install.sh)"
+bash -c "$(curl -sL https://redia-gt.github.io/dotfiles/install.sh)"
 ```
