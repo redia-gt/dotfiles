@@ -80,7 +80,7 @@
 programs.git = {
       enable = true;
       userName = "JuanAntonioSantiago015";
-      userEmail = "juanantoniosantiago92@hotmail.com";
+      userEmail = "juanantoniosantiago92@gmail.com";
       extraConfig = {
         # Sign all commits using ssh key
         commit.gpgsign = true;
