@@ -1,4 +1,4 @@
-
+#!/bin/bash
 VARIABLES=("USER" "GIT_USER" "GIT_EMAIL")
 
 echo "🔍 Verificando variables de entorno..."
