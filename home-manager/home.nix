@@ -21,6 +21,7 @@
     awscli2
     lazygit
     gh
+    podman
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
