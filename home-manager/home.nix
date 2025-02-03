@@ -75,7 +75,6 @@
     enable = true;
     keys = [
       "id_ed25519"
-      "id_ed25519_finanssoreal"
     ];
   };
   programs.git = {
