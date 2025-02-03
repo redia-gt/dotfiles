@@ -3,8 +3,8 @@
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
-  home.username = "$USER";
-  home.homeDirectory = "/home/$USER";
+  home.username = "juan";
+  home.homeDirectory = "/home/juan";
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -14,6 +14,9 @@
   # want to update the value, then make sure to first check the Home Manager
   # release notes.
   home.stateVersion = "24.11"; # Please read the comment before changing.
+  targets.genericLinux.enable = true;
+  xdg.mime.enable = true;
+  xdg.systemDirs.data = [ "${config.home.homeDirectory}/.nix-profile/share/applications" ];
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
@@ -23,6 +26,7 @@
     gh
     podman
     nixfmt-rfc-style
+    jetbrains.datagrip
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -79,13 +83,13 @@
   };
   programs.git = {
     enable = true;
-    userName = "$GIT_USER";
-    userEmail = "$GIT_EMAIL";
+    userName = "JuanAntonioSantiago015";
+    userEmail = "juanantoniosantiago92@gmail.com";
     extraConfig = {
       # Sign all commits using ssh key
       commit.gpgsign = true;
       gpg.format = "ssh";
-      user.signingkey = "$SSH_PUB_KEY";
+      user.signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOmmPTB06PiqnXWbpnaldS/X8B+SM2ps/384Yp+qWI4h juanantoniosantiago92@gmail.com";
     };
     aliases = {
       "subup" = "submodule update --init --recursive";

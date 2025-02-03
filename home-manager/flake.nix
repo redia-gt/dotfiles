@@ -14,7 +14,16 @@
     { nixpkgs, home-manager, ... }:
     let
       system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
+      # pkgs = nixpkgs.legacyPackages.${system};
+      importPkgs =
+        system:
+        import nixpkgs {
+          system = system;
+          config = {
+            allowUnfree = true;
+          };
+        };
+      pkgs = importPkgs system;
     in
     {
       homeConfigurations."juan" = home-manager.lib.homeManagerConfiguration {
