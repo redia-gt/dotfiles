@@ -1,8 +1,8 @@
 { config, pkgs, ... }:
 
 {
-  home.username = "juan";
-  home.homeDirectory = "/home/juan";
+  home.username = "$USER";
+  home.homeDirectory = "/home/$USER";
 
   home.stateVersion = "24.11"; # Please read the comment before changing.
   targets.genericLinux.enable = true;
@@ -42,8 +42,8 @@
   };
   programs.git = {
     enable = true;
-    userName = "JuanAntonioSantiago015";
-    userEmail = "juanantoniosantiago92@gmail.com";
+    userName = ${GIT_USER};
+    userEmail = ${GIT_EMAIL};
     extraConfig = {
       commit.gpgsign = true;
       gpg.format = "ssh";
