@@ -47,7 +47,7 @@
     extraConfig = {
       commit.gpgsign = true;
       gpg.format = "ssh";
-      user.signingkey = "$SSH_PUB_KEY";;
+      user.signingkey = "$SSH_PUB_KEY";
     };
     aliases = {
       "subup" = "submodule update --init --recursive";
