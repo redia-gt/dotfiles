@@ -20,8 +20,8 @@
 
   home.file = { };
 
-  home.sessionVariables = {
-    XDG_DATA_DIRS = "${config.home.homeDirectory}/.nix-profile/share:$XDG_DATA_DIRS";
+  services.podman = lib.mkIf isLinux {
+    enable = true;
   };
 
   programs.home-manager.enable = true;
