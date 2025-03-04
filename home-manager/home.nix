@@ -42,12 +42,12 @@
   };
   programs.git = {
     enable = true;
-    userName = ${GIT_USER};
-    userEmail = ${GIT_EMAIL};
+    userName = "${GIT_USER}";
+    userEmail = "${GIT_EMAIL}";
     extraConfig = {
       commit.gpgsign = true;
       gpg.format = "ssh";
-      user.signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOmmPTB06PiqnXWbpnaldS/X8B+SM2ps/384Yp+qWI4h juanantoniosantiago92@gmail.com";
+      user.signingkey = "$SSH_PUB_KEY";;
     };
     aliases = {
       "subup" = "submodule update --init --recursive";
