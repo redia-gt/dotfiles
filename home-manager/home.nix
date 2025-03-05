@@ -1,19 +1,18 @@
-{ config, pkgs, lib, ... }:
+{homeUser, config, pkgs, lib, ... }:
 
 let
   isLinux = pkgs.stdenv.hostPlatform.isLinux;
 in
 
 {
-  home.username = "$USER";
+  home.username =homeUser;
   home.homeDirectory = (
     if isLinux then "/home/${config.home.username}" else "/Users/${config.home.username}"
   );
 
   home.stateVersion = "24.11"; # Please read the comment before changing.
-  targets.genericLinux.enable = true;
-  xdg.mime.enable = true;
-  xdg.systemDirs.data = [ "${config.home.homeDirectory}/.nix-profile/share/applications" ];
+
+  xdg.systemDirs.data = lib.mkIf isLinux [ "${config.home.homeDirectory}/.nix-profile/share/applications" ];
 
   home.packages = with pkgs; [
     awscli2

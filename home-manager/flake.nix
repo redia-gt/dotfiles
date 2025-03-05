@@ -21,13 +21,15 @@
           };
         };
       pkgs = importPkgs system;
+      user="$USER";
+
     in
     {
-      homeConfigurations."juan" = home-manager.lib.homeManagerConfiguration {
+      homeConfigurations."${user}"= home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
         modules = [ ./home.nix ];
-        extraSpecialArgs = {
-
+         extraSpecialArgs = {
+          homeUser = user;
         };
       };
     };
