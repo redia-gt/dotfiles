@@ -1,8 +1,14 @@
 { config, pkgs, lib, ... }:
 
+let
+  isLinux = pkgs.stdenv.hostPlatform.isLinux;
+in
+
 {
   home.username = "$USER";
-  home.homeDirectory = "/home/$USER";
+  home.homeDirectory = (
+    if isLinux then "/home/${config.home.username}" else "/Users/${config.home.username}"
+  );
 
   home.stateVersion = "24.11"; # Please read the comment before changing.
   targets.genericLinux.enable = true;
