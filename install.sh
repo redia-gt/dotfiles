@@ -27,18 +27,5 @@ for VAR in "${VARIABLES[@]}"; do
     echo "$VAR = ${!VAR}"
 done
 
-echo "🔄 Clonando el repositorio de dotfiles..."
-git clone https://github.com/redia-gt/dotfiles $HOME/.dotfiles
-
-# Reemplazar variables de entorno en los archivos .nix
-echo "🔍 Buscando y reemplazando variables en archivos .nix..."
-
-# Buscar archivos .nix en el directorio home-manager y reemplazar variables con envsubst
-find "$HOME/.dotfiles/config/nixos" -type f -name "*.nix" | while read -r nixfile; do
-    echo "💻 Procesando archivo: $nixfile"
-    envsubst < "$nixfile" > "${nixfile}.tmp" && mv "${nixfile}.tmp" "$nixfile"
-    echo "✅ Variables reemplazadas en: $nixfile"
-done
-
-echo "⚙️ Aplicando la configuración con Home Manager..."
-home-manager switch --flake $HOME/.dotfiles/config/nixos -b bckp
+curl -sL "https://raw.githubusercontent.com/redia-gt/dotfiles/refs/heads/main/home-manager/home.nix" | \
+envsubst > "$HOME/.config/home-manager/home.nix"
