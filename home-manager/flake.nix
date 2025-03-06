@@ -1,36 +1,24 @@
 {
-  description = "Home-manager";
+  description = "Home Manager Configuration";
+
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs =
-    { nixpkgs, home-manager, ... }:
+  outputs = { nixpkgs, home-manager, ... }:
     let
       system = "x86_64-linux";
-      importPkgs =
-        system:
-        import nixpkgs {
-          system = system;
-          config = {
-            allowUnfree = true;
-          };
-        };
-      pkgs = importPkgs system;
-      user="$USER";
-
-    in
-    {
-      homeConfigurations."${user}"= home-manager.lib.homeManagerConfiguration {
+      user = builtins.getEnv "USER";  
+      pkgs = import nixpkgs { inherit system; config.allowUnfree = true; };
+    in {
+      homeConfigurations."${user}" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
         modules = [ ./home.nix ];
-         extraSpecialArgs = {
-          homeUser = user;
-        };
+        extraSpecialArgs = { homeUser = user; };
       };
     };
 }
