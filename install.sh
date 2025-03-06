@@ -17,22 +17,21 @@ fi
 echo "🔍 Verificando versión de curl..."
 curl --version
 
-# Verificar si Nix está instalado, si no, instalarlo
+# Verificar si Nix está instalado
 if ! command -v nix &> /dev/null; then
-    echo "⚠️ Nix no está instalado. Instalando Nix..."
-    sh <(curl -L https://nixos.org/nix/install) --daemon --yes
-    if ! command -v nix &> /dev/null; then
-        echo "❌ No se pudo instalar Nix. Asegúrate de tener permisos de sudo."
-        exit 1
-    fi
-    echo "✅ Nix instalado correctamente."
-else
-    echo "✅ Nix ya está instalado."
+    echo "⚠️ Nix no está instalado. Por favor, instálalo manualmente y reinicia la terminal antes de ejecutar este script."
+    exit 1
 fi
 
 # Comprobar la versión de Nix
 echo "🔍 Verificando versión de Nix..."
 nix --version
+
+# Habilitar características experimentales de Nix
+echo "⚙️ Configurando características experimentales de Nix..."
+mkdir -p ~/.config/nix
+echo "experimental-features = nix-command flakes" > ~/.config/nix/nix.conf
+echo "✅ Características experimentales habilitadas."
 
 # Verificar las variables de entorno
 VARIABLES=("USER" "GIT_USER" "GIT_EMAIL")
@@ -50,7 +49,7 @@ for VAR in "${VARIABLES[@]}"; do
     fi
 done
 
-# Generar clave SSH
+# Generar clave SSH si no existe
 if [[ ! -f "$HOME/.ssh/id_ed25519" ]]; then
     ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N "" -C "${GIT_EMAIL}" -q
     echo "✅ Clave SSH generada."
@@ -69,9 +68,16 @@ done
 
 # Descargar el archivo home.nix
 echo "🔄 Descargando home.nix..."
+mkdir -p ~/.config/home-manager
 curl -sL "https://raw.githubusercontent.com/redia-gt/dotfiles/refs/heads/main/home-manager/home.nix" | \
 envsubst > "$HOME/.config/home-manager/home.nix"
-echo "✅ home.nix descargado correctamente."
+
+if [[ -f "$HOME/.config/home-manager/home.nix" ]]; then
+    echo "✅ home.nix descargado correctamente."
+else
+    echo "❌ Error al descargar home.nix. Verifica la URL y tu conexión a internet."
+    exit 1
+fi
 
 # Ejecutar Home Manager
 echo "🚀 Ejecutando Home Manager..."
