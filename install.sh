@@ -81,4 +81,4 @@ fi
 
 # Ejecutar Home Manager
 echo "🚀 Ejecutando Home Manager..."
-nix shell nixpkgs#home-manager nixpkgs#git --command home-manager switch --flake "$HOME/.dotfiles/home-manager#home"
+nix shell nixpkgs#home-manager nixpkgs#git --command home-manager switch --flake "$HOME/.dotfiles/home-manager#USER"
