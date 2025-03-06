@@ -15,7 +15,7 @@
       user = builtins.getEnv "USER";  
       pkgs = import nixpkgs { inherit system; config.allowUnfree = true; };
     in {
-      homeConfigurations."${user}" = home-manager.lib.homeManagerConfiguration {
+      homeConfigurations.${user} = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
         modules = [ ./home.nix ];
         extraSpecialArgs = { homeUser = user; };
