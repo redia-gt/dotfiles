@@ -1,6 +1,13 @@
 #!/bin/bash
 
-# Verificar si curl está instalado, si no, instalarlo
+set -e  # Detiene el script si hay errores
+
+# 🚀 Definir variables
+REPO_URL="https://github.com/redia-gt/dotfiles"
+DOTFILES_DIR="$HOME/.dotfiles"
+HOME_MANAGER_DIR="$DOTFILES_DIR/home-manager"
+
+# 📌 Verificar si curl está instalado, si no, instalarlo
 if ! command -v curl &> /dev/null; then
     echo "⚠️ curl no está instalado. Instalando..."
     sudo apt update && sudo apt install -y curl
@@ -13,28 +20,25 @@ else
     echo "✅ curl ya está instalado."
 fi
 
-# Comprobar la versión de curl
-echo "🔍 Verificando versión de curl..."
-curl --version
-
-# Verificar si Nix está instalado
+# 🔍 Verificar si Nix está instalado
 if ! command -v nix &> /dev/null; then
-    echo "⚠️ Nix no está instalado. Por favor, instálalo manualmente y reinicia la terminal antes de ejecutar este script."
-    exit 1
+    echo "⚠️ Nix no está instalado. Instalándolo..."
+    sh <(curl -L https://nixos.org/nix/install) --no-daemon
+    source "$HOME/.nix-profile/etc/profile.d/nix.sh"
 fi
 
-# Comprobar la versión de Nix
-echo "🔍 Verificando versión de Nix..."
-nix --version
-
-# Habilitar características experimentales de Nix
-echo "⚙️ Configurando características experimentales de Nix..."
+# 📌 Configurar características experimentales de Nix
+echo "⚙️ Configurando Nix con flakes..."
 mkdir -p ~/.config/nix
 echo "experimental-features = nix-command flakes" > ~/.config/nix/nix.conf
-echo "✅ Características experimentales habilitadas."
+echo "✅ Configuración de Nix completada."
 
-# Verificar las variables de entorno
-VARIABLES=("USER" "GIT_USER" "GIT_EMAIL")
+# 📌 Definir usuario actual
+USER_NAME=$(whoami)
+echo "👤 Usuario detectado: $USER_NAME"
+
+# 📌 Variables necesarias
+VARIABLES=("USER_NAME" "GIT_USER" "GIT_EMAIL")
 
 echo "🔍 Verificando variables de entorno..."
 
@@ -49,28 +53,32 @@ for VAR in "${VARIABLES[@]}"; do
     fi
 done
 
-# Generar clave SSH si no existe
+# 🔐 Generar clave SSH si no existe
 if [[ ! -f "$HOME/.ssh/id_ed25519" ]]; then
-    ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N "" -C "${GIT_EMAIL}" -q
+    ssh-keygen -t ed25519 -f "$HOME/.ssh/id_ed25519" -N "" -C "$GIT_EMAIL" -q
     echo "✅ Clave SSH generada."
 else
     echo "✅ Clave SSH ya existe."
 fi
 
-SSH_PUB_KEY=$(cat "$HOME/.ssh/id_ed25519.pub")
-VARIABLES+=("SSH_PUB_KEY")
+export SSH_PUB_KEY=$(cat "$HOME/.ssh/id_ed25519.pub")
 
-# Mostrar todas las variables al final
-echo -e "\n📌 **Resumen de Variables**"
-for VAR in "${VARIABLES[@]}"; do
-    echo "$VAR = ${!VAR}"
-done
+# 📌 Clonar repositorio de dotfiles
+echo "🔄 Clonando dotfiles..."
+if [[ ! -d "$DOTFILES_DIR" ]]; then
+    git clone "$REPO_URL" "$DOTFILES_DIR"
+else
+    echo "✅ Dotfiles ya clonados en $DOTFILES_DIR."
+fi
 
-# Descargar el archivo home.nix
+# 📌 Reemplazar "DEFAULT_USER" en flake.nix con el usuario real
+echo "🔧 Configurando flake.nix..."
+sed -i "s/DEFAULT_USER/$USER_NAME/g" "$HOME_MANAGER_DIR/flake.nix"
+
+# 📌 Descargar `home.nix`
 echo "🔄 Descargando home.nix..."
 mkdir -p ~/.config/home-manager
-curl -sL "https://raw.githubusercontent.com/redia-gt/dotfiles/refs/heads/main/home-manager/home.nix" | \
-envsubst > "$HOME/.config/home-manager/home.nix"
+curl -sL "$REPO_URL/refs/heads/main/home-manager/home.nix" | envsubst > "$HOME/.config/home-manager/home.nix"
 
 if [[ -f "$HOME/.config/home-manager/home.nix" ]]; then
     echo "✅ home.nix descargado correctamente."
@@ -79,6 +87,8 @@ else
     exit 1
 fi
 
-# Ejecutar Home Manager
+# 🚀 Ejecutar Home Manager
 echo "🚀 Ejecutando Home Manager..."
-nix shell nixpkgs#home-manager nixpkgs#git --command home-manager switch --flake "$HOME/.dotfiles/home-manager#USER"
+nix shell nixpkgs#home-manager nixpkgs#git --command home-manager switch --flake "$HOME_MANAGER_DIR#$USER_NAME"
+
+echo "✅ Instalación completada con éxito."
