@@ -3,13 +3,23 @@
 set -e  # Detiene el script si hay errores
 
 # 🚀 Definir variables
+REPO_URL="https://github.com/redia-gt/dotfiles"
 DOTFILES_DIR="$HOME/.dotfiles"
 HOME_MANAGER_DIR="$DOTFILES_DIR/home-manager"
 
 # 📌 Definir usuario actual
 USER_NAME=$(whoami)
 export USER="$USER_NAME"  # Asegurar que envsubst pueda reemplazarlo
-echo "👤 Usuario detectado: $USER_NAME"
+#echo "👤 Usuario detectado: $USER_NAME"
+
+# 📌 Verificar si el repositorio ya fue clonado
+echo "🔄 Verificando si los dotfiles ya están clonados..."
+if [[ ! -d "$DOTFILES_DIR" ]]; then
+    echo "🔄 Clonando repositorio de dotfiles..."
+    git clone "$REPO_URL" "$DOTFILES_DIR"
+else
+    echo "✅ Los dotfiles ya están clonados en $DOTFILES_DIR."
+fi
 
 # 📌 Verificar variables de entorno
 VARIABLES=("USER" "GIT_USER" "GIT_EMAIL")
