@@ -14,22 +14,9 @@ if ! command -v curl &> /dev/null; then
     echo "✅ curl instalado correctamente."
 fi
 
-# 🔍 Verificar si Nix está instalado
-if ! command -v nix &> /dev/null; then
-    echo "⚠️ Nix no está instalado. Instalándolo..."
-    sh <(curl -L https://nixos.org/nix/install) --no-daemon
-    source "$HOME/.nix-profile/etc/profile.d/nix.sh"
-fi
-
-# 📌 Configurar características experimentales de Nix
-echo "⚙️ Configurando Nix con flakes..."
-mkdir -p ~/.config/nix
-echo "experimental-features = nix-command flakes" > ~/.config/nix/nix.conf
-echo "✅ Configuración de Nix completada."
-
 # 📌 Definir usuario actual
 USER_NAME=$(whoami)
-export USER="$USER_NAME"  # Asegurar que envsubst puede reemplazarlo
+export USER="$USER_NAME"  # Asegurar que envsubst pueda reemplazarlo
 echo "👤 Usuario detectado: $USER_NAME"
 
 # 📌 Verificar variables de entorno
