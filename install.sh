@@ -63,14 +63,26 @@ else
     echo "⚠️ flake.nix está vacío o no existe"
 fi
 
+
 echo "🔧 Aplicando envsubst en home.nix..."
 if [[ -s "$HOME_MANAGER_DIR/home.nix" ]]; then
+    echo "📂 Contenido original de home.nix:"
+    cat "$HOME_MANAGER_DIR/home.nix"
+
+    echo -e "\n🔄 Aplicando sustitución de variables..."
+
     # Sobrescribir el archivo original con las variables de entorno
-    envsubst '${USER} ${GIT_USER} ${GIT_EMAIL} ${SSH_PUB_KEY}' < "$HOME_MANAGER_DIR/home.nix" > "$HOME/.config/home-manager/home.nix"
+    echo "$(envsubst < "$HOME_MANAGER_DIR/home.nix")" > "$HOME/.config/home-manager/home.nix"
+
+    echo -e "\n📂 Contenido después de envsubst en home.nix:"
+    cat "$HOME/.config/home-manager/home.nix"
+
     echo "✅ home.nix configurado correctamente."
 else
-    echo "⚠️ home.nix está vacío o no existe"
+    echo "⚠ home.nix está vacío o no existe"
 fi
+
+
 
 # 🚀 Ejecutar Home Manager usando `flake.generated.nix`
 echo "🚀 Ejecutando Home Manager..."
