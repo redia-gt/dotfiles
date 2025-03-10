@@ -54,7 +54,7 @@ fi
 
 # 📌 Sustituir `$USER` en `flake.nix` y generar `flake.generated.nix`
 echo "🔧 Configurando flake.nix..."
-envsubst < "$HOME_MANAGER_DIR/flake.nix" > "$HOME_MANAGER_DIR/flake.generated.nix"
+envsubst < "$HOME_MANAGER_DIR/flake.nix" > "$HOME_MANAGER_DIR/flake.nix"
 echo "✅ flake.generated.nix creado con usuario: $USER_NAME"
 
 # 📌 Sustituir variables de entorno en `home.nix` y aplicar `envsubst`
