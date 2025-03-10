@@ -3,7 +3,6 @@
 set -e  # Detiene el script si hay errores
 
 # 🚀 Definir variables
-REPO_URL="https://github.com/redia-gt/dotfiles"
 DOTFILES_DIR="$HOME/.dotfiles"
 HOME_MANAGER_DIR="$DOTFILES_DIR/home-manager"
 
@@ -44,19 +43,11 @@ for VAR in "${VARIABLES[@]}"; do
     echo "$VAR = ${!VAR}"
 done
 
-# 📌 Clonar repositorio de dotfiles
-echo "🔄 Clonando dotfiles..."
-if [[ ! -d "$DOTFILES_DIR" ]]; then
-    git clone "$REPO_URL" "$DOTFILES_DIR"
-else
-    echo "✅ Dotfiles ya clonados en $DOTFILES_DIR."
-fi
-
 # 📌 Sustituir `$USER` en `flake.nix` y `home.nix` con envsubst
 echo "🔧 Sustituyendo variables en flake.nix..."
 if [[ -s "$HOME_MANAGER_DIR/flake.nix" ]]; then
-    envsubst < "$HOME_MANAGER_DIR/flake.nix" > "$HOME_MANAGER_DIR/flake.nix"
-    echo "✅ flake.nix actualizado con usuario: $USER_NAME"
+    envsubst < "$HOME_MANAGER_DIR/flake.nix" > "$HOME_MANAGER_DIR/flake.generated.nix"
+    echo "✅ flake.generated.nix actualizado con usuario: $USER_NAME"
 else
     echo "⚠️ flake.nix está vacío o no existe"
 fi
@@ -69,10 +60,10 @@ else
     echo "⚠️ home.nix está vacío o no existe"
 fi
 
-# 🚀 Ejecutar Home Manager usando `flake.nix`
+# 🚀 Ejecutar Home Manager usando `flake.generated.nix`
 echo "🚀 Ejecutando Home Manager..."
 nix flake update "$HOME_MANAGER_DIR"
 nix build "$HOME_MANAGER_DIR#homeConfigurations.$USER.activationPackage"
-home-manager switch --flake "$HOME_MANAGER_DIR/flake.nix#$USER"
+home-manager switch --flake "$HOME_MANAGER_DIR/flake.generated.nix#$USER"
 
 echo "✅ Instalación completada con éxito."
