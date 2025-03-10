@@ -11,13 +11,7 @@ HOME_MANAGER_DIR="$DOTFILES_DIR/home-manager"
 if ! command -v curl &> /dev/null; then
     echo "⚠️ curl no está instalado. Instalando..."
     sudo apt update && sudo apt install -y curl
-    if ! command -v curl &> /dev/null; then
-        echo "❌ No se pudo instalar curl. Asegúrate de tener permisos de sudo."
-        exit 1
-    fi
     echo "✅ curl instalado correctamente."
-else
-    echo "✅ curl ya está instalado."
 fi
 
 # 🔍 Verificar si Nix está instalado
@@ -35,13 +29,13 @@ echo "✅ Configuración de Nix completada."
 
 # 📌 Definir usuario actual
 USER_NAME=$(whoami)
+export USER="$USER_NAME"  # Asegurar que envsubst puede reemplazarlo
 echo "👤 Usuario detectado: $USER_NAME"
 
-# 📌 Variables necesarias
-VARIABLES=("USER_NAME" "GIT_USER" "GIT_EMAIL")
+# 📌 Verificar variables de entorno
+VARIABLES=("USER" "GIT_USER" "GIT_EMAIL")
 
 echo "🔍 Verificando variables de entorno..."
-
 for VAR in "${VARIABLES[@]}"; do
     if [[ -z "${!VAR}" ]]; then
         echo "⚠️ $VAR no está definida. Ingresa un valor:"
@@ -62,6 +56,13 @@ else
 fi
 
 export SSH_PUB_KEY=$(cat "$HOME/.ssh/id_ed25519.pub")
+VARIABLES+=("SSH_PUB_KEY")
+
+# 📌 Mostrar todas las variables
+echo -e "\n📌 **Resumen de Variables**"
+for VAR in "${VARIABLES[@]}"; do
+    echo "$VAR = ${!VAR}"
+done
 
 # 📌 Clonar repositorio de dotfiles
 echo "🔄 Clonando dotfiles..."
@@ -71,14 +72,15 @@ else
     echo "✅ Dotfiles ya clonados en $DOTFILES_DIR."
 fi
 
-# 📌 Reemplazar "DEFAULT_USER" en flake.nix con el usuario real
+# 📌 Sustituir `$USER` en `flake.nix` y generar `flake.generated.nix`
 echo "🔧 Configurando flake.nix..."
-sed -i "s/DEFAULT_USER/$USER_NAME/g" "$HOME_MANAGER_DIR/flake.nix"
+envsubst < "$HOME_MANAGER_DIR/flake.nix" > "$HOME_MANAGER_DIR/flake.generated.nix"
+echo "✅ flake.generated.nix creado con usuario: $USER_NAME"
 
-# 📌 Descargar `home.nix`
+# 📌 Descargar `home.nix` y aplicar `envsubst`
 echo "🔄 Descargando home.nix..."
 mkdir -p ~/.config/home-manager
-curl -sL "$REPO_URL/refs/heads/main/home-manager/home.nix" | envsubst > "$HOME/.config/home-manager/home.nix"
+curl -sL "https://raw.githubusercontent.com/redia-gt/dotfiles/main/home-manager/home.nix" | envsubst > "$HOME/.config/home-manager/home.nix"
 
 if [[ -f "$HOME/.config/home-manager/home.nix" ]]; then
     echo "✅ home.nix descargado correctamente."
@@ -87,8 +89,10 @@ else
     exit 1
 fi
 
-# 🚀 Ejecutar Home Manager
+# 🚀 Ejecutar Home Manager usando `flake.generated.nix`
 echo "🚀 Ejecutando Home Manager..."
-nix shell nixpkgs#home-manager nixpkgs#git --command home-manager switch --flake "$HOME_MANAGER_DIR#$USER_NAME"
+nix flake update "$HOME_MANAGER_DIR"
+nix build "$HOME_MANAGER_DIR#homeConfigurations.$USER.activationPackage"
+home-manager switch --flake "$HOME_MANAGER_DIR/flake.generated.nix#$USER"
 
 echo "✅ Instalación completada con éxito."
