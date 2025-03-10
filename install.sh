@@ -7,17 +7,10 @@ REPO_URL="https://github.com/redia-gt/dotfiles"
 DOTFILES_DIR="$HOME/.dotfiles"
 HOME_MANAGER_DIR="$DOTFILES_DIR/home-manager"
 
-# 📌 Verificar si curl está instalado, si no, instalarlo
-if ! command -v curl &> /dev/null; then
-    echo "⚠️ curl no está instalado. Instalando..."
-    sudo apt update && sudo apt install -y curl
-    echo "✅ curl instalado correctamente."
-fi
-
 # 📌 Definir usuario actual
-USER_NAME=$(whoami)
-export USER="$USER_NAME"  # Asegurar que envsubst pueda reemplazarlo
-echo "👤 Usuario detectado: $USER_NAME"
+#USER_NAME=$(whoami)
+#export USER="$USER_NAME"  # Asegurar que envsubst pueda reemplazarlo
+#echo "👤 Usuario detectado: $USER_NAME"
 
 # 📌 Verificar variables de entorno
 VARIABLES=("USER" "GIT_USER" "GIT_EMAIL")
@@ -64,17 +57,10 @@ echo "🔧 Configurando flake.nix..."
 envsubst < "$HOME_MANAGER_DIR/flake.nix" > "$HOME_MANAGER_DIR/flake.generated.nix"
 echo "✅ flake.generated.nix creado con usuario: $USER_NAME"
 
-# 📌 Descargar `home.nix` y aplicar `envsubst`
-echo "🔄 Descargando home.nix..."
-mkdir -p ~/.config/home-manager
-curl -sL "https://raw.githubusercontent.com/redia-gt/dotfiles/main/home-manager/home.nix" | envsubst > "$HOME/.config/home-manager/home.nix"
-
-if [[ -f "$HOME/.config/home-manager/home.nix" ]]; then
-    echo "✅ home.nix descargado correctamente."
-else
-    echo "❌ Error al descargar home.nix. Verifica la URL y tu conexión a internet."
-    exit 1
-fi
+# 📌 Sustituir variables de entorno en `home.nix` y aplicar `envsubst`
+echo "🔧 Aplicando envsubst en home.nix..."
+envsubst < "$HOME_MANAGER_DIR/home.nix" > "$HOME/.config/home-manager/home.nix"
+echo "✅ home.nix configurado correctamente."
 
 # 🚀 Ejecutar Home Manager usando `flake.generated.nix`
 echo "🚀 Ejecutando Home Manager..."
