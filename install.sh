@@ -56,15 +56,17 @@ done
 # 📌 Sustituir `$USER` en `flake.nix` y `home.nix` con envsubst
 echo "🔧 Sustituyendo variables en flake.nix..."
 if [[ -s "$HOME_MANAGER_DIR/flake.nix" ]]; then
-    envsubst < "$HOME_MANAGER_DIR/flake.nix" > "$HOME_MANAGER_DIR/flake.generated.nix"
-    echo "✅ flake.generated.nix actualizado con usuario: $USER_NAME"
+    # Sobrescribir el archivo original
+    echo "$(envsubst < "$HOME_MANAGER_DIR/flake.nix")" > "$HOME_MANAGER_DIR/flake.nix"
+    echo "✅ flake.nix actualizado con usuario: $USER_NAME"
 else
     echo "⚠️ flake.nix está vacío o no existe"
 fi
 
 echo "🔧 Aplicando envsubst en home.nix..."
 if [[ -s "$HOME_MANAGER_DIR/home.nix" ]]; then
-    envsubst < "$HOME_MANAGER_DIR/home.nix" > "$HOME/.config/home-manager/home.nix"
+    # Sobrescribir el archivo original
+    echo "$(envsubst < "$HOME_MANAGER_DIR/home.nix")" > "$HOME/.config/home-manager/home.nix"
     echo "✅ home.nix configurado correctamente."
 else
     echo "⚠️ home.nix está vacío o no existe"
