@@ -10,7 +10,7 @@ HOME_MANAGER_DIR="$DOTFILES_DIR/home-manager"
 # 📌 Definir usuario actual
 USER_NAME=$(whoami)
 export USER="$USER_NAME"  # Asegurar que envsubst pueda reemplazarlo
-#echo "👤 Usuario detectado: $USER_NAME"
+echo "👤 Usuario detectado: $USER_NAME"
 
 # 📌 Verificar variables de entorno
 VARIABLES=("USER" "GIT_USER" "GIT_EMAIL")
@@ -54,12 +54,20 @@ fi
 
 # 📌 Sustituir `$USER` en `flake.nix` y `home.nix` con envsubst
 echo "🔧 Sustituyendo variables en flake.nix..."
-envsubst < "$HOME_MANAGER_DIR/flake.nix" > "$HOME_MANAGER_DIR/flake.nix"
-echo "✅ flake.nix actualizado con usuario: $USER_NAME"
+if [[ -s "$HOME_MANAGER_DIR/flake.nix" ]]; then
+    envsubst < "$HOME_MANAGER_DIR/flake.nix" > "$HOME_MANAGER_DIR/flake.nix"
+    echo "✅ flake.nix actualizado con usuario: $USER_NAME"
+else
+    echo "⚠️ flake.nix está vacío o no existe"
+fi
 
 echo "🔧 Aplicando envsubst en home.nix..."
-envsubst < "$HOME_MANAGER_DIR/home.nix" > "$HOME/.config/home-manager/home.nix"
-echo "✅ home.nix configurado correctamente."
+if [[ -s "$HOME_MANAGER_DIR/home.nix" ]]; then
+    envsubst < "$HOME_MANAGER_DIR/home.nix" > "$HOME/.config/home-manager/home.nix"
+    echo "✅ home.nix configurado correctamente."
+else
+    echo "⚠️ home.nix está vacío o no existe"
+fi
 
 # 🚀 Ejecutar Home Manager usando `flake.nix`
 echo "🚀 Ejecutando Home Manager..."
