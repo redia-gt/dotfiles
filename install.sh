@@ -8,8 +8,8 @@ DOTFILES_DIR="$HOME/.dotfiles"
 HOME_MANAGER_DIR="$DOTFILES_DIR/home-manager"
 
 # 📌 Definir usuario actual
-#USER_NAME=$(whoami)
-#export USER="$USER_NAME"  # Asegurar que envsubst pueda reemplazarlo
+USER_NAME=$(whoami)
+export USER="$USER_NAME"  # Asegurar que envsubst pueda reemplazarlo
 #echo "👤 Usuario detectado: $USER_NAME"
 
 # 📌 Verificar variables de entorno
@@ -52,20 +52,19 @@ else
     echo "✅ Dotfiles ya clonados en $DOTFILES_DIR."
 fi
 
-# 📌 Sustituir `$USER` en `flake.nix` y generar `flake.generated.nix`
-echo "🔧 Configurando flake.nix..."
+# 📌 Sustituir `$USER` en `flake.nix` y `home.nix` con envsubst
+echo "🔧 Sustituyendo variables en flake.nix..."
 envsubst < "$HOME_MANAGER_DIR/flake.nix" > "$HOME_MANAGER_DIR/flake.nix"
-echo "✅ flake.generated.nix creado con usuario: $USER_NAME"
+echo "✅ flake.nix actualizado con usuario: $USER_NAME"
 
-# 📌 Sustituir variables de entorno en `home.nix` y aplicar `envsubst`
 echo "🔧 Aplicando envsubst en home.nix..."
 envsubst < "$HOME_MANAGER_DIR/home.nix" > "$HOME/.config/home-manager/home.nix"
 echo "✅ home.nix configurado correctamente."
 
-# 🚀 Ejecutar Home Manager usando `flake.generated.nix`
+# 🚀 Ejecutar Home Manager usando `flake.nix`
 echo "🚀 Ejecutando Home Manager..."
 nix flake update "$HOME_MANAGER_DIR"
 nix build "$HOME_MANAGER_DIR#homeConfigurations.$USER.activationPackage"
-home-manager switch --flake "$HOME_MANAGER_DIR/flake.generated.nix#$USER"
+home-manager switch --flake "$HOME_MANAGER_DIR/flake.nix#$USER"
 
 echo "✅ Instalación completada con éxito."
