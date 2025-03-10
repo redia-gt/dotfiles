@@ -7,7 +7,7 @@ in
 {
   home.username =homeUser;
   home.homeDirectory = (
-     if isLinux then "/home/${homeUser}" else "/Users/${homeUser}"
+    if isLinux then "/home/${config.home.username}" else "/Users/${config.home.username}"
   );
 
   home.stateVersion = "24.11"; # Please read the comment before changing.
@@ -47,12 +47,12 @@ in
   };
   programs.git = {
     enable = true;
-    userName = builtins.getEnv "GIT_USER";
-    userEmail = builtins.getEnv "GIT_EMAIL";
+    userName = "${GIT_USER}";
+    userEmail = "${GIT_EMAIL}";
     extraConfig = {
       commit.gpgsign = true;
       gpg.format = "ssh";
-      user.signingkey = builtins.getEnv "SSH_PUB_KEY";
+      user.signingkey = "$SSH_PUB_KEY";
     };
     aliases = {
       "subup" = "submodule update --init --recursive";
