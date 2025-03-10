@@ -56,8 +56,8 @@ done
 # 📌 Sustituir `$USER` en `flake.nix` y `home.nix` con envsubst
 echo "🔧 Sustituyendo variables en flake.nix..."
 if [[ -s "$HOME_MANAGER_DIR/flake.nix" ]]; then
-    # Sobrescribir el archivo original con las variables de entorno
-    envsubst '${USER} ${GIT_USER} ${GIT_EMAIL} ${SSH_PUB_KEY}' < "$HOME_MANAGER_DIR/flake.nix" > "$HOME_MANAGER_DIR/flake.nix"
+    # Sobrescribir el archivo original
+    echo "$(envsubst < "$HOME_MANAGER_DIR/flake.nix")" > "$HOME_MANAGER_DIR/flake.nix"
     echo "✅ flake.nix actualizado con usuario: $USER_NAME"
 else
     echo "⚠️ flake.nix está vacío o no existe"
