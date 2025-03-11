@@ -6,7 +6,7 @@ set -eo pipefail  # Detiene el script si hay errores
 REPO_URL="https://github.com/redia-gt/dotfiles"
 DOTFILES_DIR="$HOME/.dotfiles"
 HOME_MANAGER_DIR="$DOTFILES_DIR/home-manager"
-OUTPUT_DIR="~/.config/home-manager"
+OUTPUT_DIR="$HOME/.config/home-manager"
 
 mkdir -p $OUTPUT_DIR
 
