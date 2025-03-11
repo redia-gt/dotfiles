@@ -49,8 +49,7 @@ VARIABLES+=("SSH_PUB_KEY")
 
 # 📌 Mostrar todas las variables
 echo -e "\n📌 **Resumen de Variables**"
-for VAR in "${VARIABLES[@]}"; do
-    echo "$VAR = ${!VAR}"
+for VAR in "${VARIABLES[@]}"; do echo "$VAR = ${!VAR}" done
 done
 
 # 📌 Sustituir `$USER` en `flake.nix` y `home.nix` con envsubst
@@ -63,6 +62,7 @@ else
     echo "⚠️ flake.nix está vacío o no existe"
 fi
 
+# -----------------------------------------------------------
 
 echo "🔧 Aplicando envsubst en home.nix..."
 if [[ -s "$HOME_MANAGER_DIR/home.nix" ]]; then
@@ -71,11 +71,20 @@ if [[ -s "$HOME_MANAGER_DIR/home.nix" ]]; then
 
     echo -e "\n🔄 Aplicando sustitución de variables..."
 
-    # Sobrescribir el archivo original con las variables de entorno
-    echo "$(envsubst < "$HOME_MANAGER_DIR/home.nix")" > "$HOME/.config/home-manager/home.nix"
+    # Asegurarse de que las variables de entorno están exportadas correctamente
+    export USER="$USER"
+    export GIT_USER="$GIT_USER"
+    export GIT_EMAIL="$GIT_EMAIL"
+    export SSH_PUB_KEY="$SSH_PUB_KEY"
+
+    # Generar un nuevo archivo con las variables sustituidas
+    envsubst '${USER} ${GIT_USER} ${GIT_EMAIL} ${SSH_PUB_KEY}' < "$HOME_MANAGER_DIR/home.nix" > "$HOME_MANAGER_DIR/home.nix.tmp"
+
+    # Reemplazar el archivo original
+    mv "$HOME_MANAGER_DIR/home.nix.tmp" "$HOME_MANAGER_DIR/home.nix"
 
     echo -e "\n📂 Contenido después de envsubst en home.nix:"
-    cat "$HOME/.config/home-manager/home.nix"
+    cat "$HOME_MANAGER_DIR/home.nix"
 
     echo "✅ home.nix configurado correctamente."
 else
@@ -83,9 +92,7 @@ else
 fi
 
 
-
-# 🚀 Ejecutar Home Manager usando `flake.generated.nix`
-echo "🚀 Ejecutando Home Manager..."
+# 🚀 Ejecutar Home Manager usando `flake.generated.nix` echo "🚀 Ejecutando Home Manager..."
 nix flake update "$HOME_MANAGER_DIR"
 nix build "$HOME_MANAGER_DIR#homeConfigurations.$USER.activationPackage"
 home-manager switch --flake "$HOME_MANAGER_DIR/flake.generated.nix#$USER"
