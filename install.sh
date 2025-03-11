@@ -2,6 +2,9 @@
 
 set -eo pipefail  # Detiene el script si hay errores
 
+sudo apt update && sudo apt install -y \
+    gettext-base uidmap
+
 # 🚀 Definir variables
 REPO_URL="https://github.com/redia-gt/dotfiles"
 DOTFILES_DIR="$HOME/.dotfiles"
@@ -30,9 +33,6 @@ if [[ ! -f "$HOME/.ssh/id_ed25519" ]]; then
     ssh-keygen -t ed25519 -f "$HOME/.ssh/id_ed25519" -N "" -C "${GIT_EMAIL}" -q
 fi
 
-# Agregar la public key
-VARIABLES+=("SSH_PUB_KEY")
 export SSH_PUB_KEY=$(cat "$HOME/.ssh/id_ed25519.pub")
-
 envsubst < "$HOME_MANAGER_DIR/flake.nix" > "$OUTPUT_DIR/flake.nix"
 envsubst < "$HOME_MANAGER_DIR/home.nix" > "$OUTPUT_DIR/home.nix"
