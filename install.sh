@@ -3,7 +3,7 @@
 set -eo pipefail  # Detiene el script si hay errores
 
 sudo apt update && sudo apt install -y \
-    gettext-base uidmap
+    gettext-base uidmap xz-utils
 
 # 🚀 Definir variables
 REPO_URL="https://github.com/redia-gt/dotfiles"
@@ -41,3 +41,15 @@ fi
 export SSH_PUB_KEY=$(cat "$HOME/.ssh/id_ed25519.pub")
 envsubst < "$HOME_MANAGER_DIR/flake.nix" > "$OUTPUT_DIR/flake.nix"
 envsubst < "$HOME_MANAGER_DIR/home.nix" > "$OUTPUT_DIR/home.nix"
+
+# 📂 Respaldar archivos conflictivos si existen
+[[ -f ~/.bashrc ]] && mv ~/.bashrc ~/.bashrc.backup
+[[ -f ~/.profile ]] && mv ~/.profile ~/.profile.backup
+
+# 🚀 Instalar y ejecutar Home Manager
+if ! command -v home-manager &> /dev/null; then
+    nix run home-manager/master -- switch
+fi
+
+# 🛠️ Aplicar configuración de Home Manager
+home-manager switch -b backup || { echo "❌ Error ejecutando home-manager"; exit 1; }
