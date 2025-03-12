@@ -34,8 +34,7 @@ in
     vscode
     tmux
     unzip
-    nvim
-    
+    neovim
   ];
 
   home.file = { };
