@@ -7,7 +7,7 @@ sudo apt update && sudo apt install -y \
 
 # 🚀 Definir variables
 REPO_URL="https://github.com/redia-gt/dotfiles"
-DOTFILES_DIR="$HOME/.dotfiles"
+DOTFILES_DIR="$HOME/.redia-dots"
 HOME_MANAGER_DIR="$DOTFILES_DIR/home-manager"
 OUTPUT_DIR="$HOME/.config/home-manager"
 
@@ -22,7 +22,7 @@ else
     git -C "$DOTFILES_DIR" fetch origin
     git -C "$DOTFILES_DIR" reset --hard origin/main
     git -C "$DOTFILES_DIR" pull
-    
+
 fi
 
 # Leer variables si no existen
