@@ -10,7 +10,17 @@ in
     if isLinux then "/home/${config.home.username}" else "/Users/${config.home.username}"
   );
 
-  home.stateVersion = "24.11"; # Please read the comment before changing.
+  home.stateVersion = "24.11";
+ home.sessionVariables = {
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+  };
+
+  home.shellAliases = {
+    vi = "nvim";
+    vim = "nvim";
+    lg = "lazygit";
+  };
 
   xdg.systemDirs.data = lib.mkIf isLinux [ "${config.home.homeDirectory}/.nix-profile/share/applications" ];
 
@@ -23,6 +33,9 @@ in
     jetbrains.datagrip
     vscode
     tmux
+    unzip
+    nvim
+    
   ];
 
   home.file = { };
