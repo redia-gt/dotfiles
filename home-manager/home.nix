@@ -35,6 +35,7 @@ in
     tmux
     unzip
     neovim
+    nerd-fonts.jetbrains-mono
   ];
 
   home.file = { };

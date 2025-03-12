@@ -7,3 +7,11 @@
 ```bash
 bash -c "$(curl -sL https://redia-gt.github.io/dotfiles/install.sh)"
 ```
+## Posibles Errores
+
+Solución a posible error de ejecución de vscode en ubuntu 24
+
+```bash
+echo "kernel.apparmor_restrict_unprivileged_userns=0" | sudo tee /etc/sysctl.d/60-apparmor-namespace.conf > /dev/null
+
+```
