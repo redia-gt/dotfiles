@@ -21,6 +21,8 @@ in
     podman
     nixfmt-rfc-style
     jetbrains.datagrip
+    vscode
+    tmux
   ];
 
   home.file = { };
