@@ -39,12 +39,14 @@ if [[ ! -f "$HOME/.ssh/id_ed25519" ]]; then
 fi
 
 export SSH_PUB_KEY=$(cat "$HOME/.ssh/id_ed25519.pub")
-envsubst < "$HOME_MANAGER_DIR/flake.nix" > "$OUTPUT_DIR/flake.nix"
+envsubst '${USER}' < "$HOME_MANAGER_DIR/flake.nix" > "$OUTPUT_DIR/flake.nix"
 envsubst < "$HOME_MANAGER_DIR/home.nix" > "$OUTPUT_DIR/home.nix"
 
 # 📂 Respaldar archivos conflictivos si existen
 [[ -f ~/.bashrc ]] && mv ~/.bashrc ~/.bashrc.backup
 [[ -f ~/.profile ]] && mv ~/.profile ~/.profile.backup
+
+mkdir -p ~/.config/nix && echo "experimental-features = nix-command flakes" > ~/.config/nix/nix.conf
 
 # 🚀 Instalar y ejecutar Home Manager
 if ! command -v home-manager &> /dev/null; then
