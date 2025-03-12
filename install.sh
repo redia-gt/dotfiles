@@ -17,12 +17,12 @@ mkdir -p $OUTPUT_DIR
 VARIABLES=("USER" "GIT_USER" "GIT_EMAIL")
 
 if [[ ! -d "$DOTFILES_DIR" ]]; then
-    read -r -p "El repositorio ya esxite. Actualizando..."
+    git clone "$REPO_URL" "$DOTFILES_DIR"
+else
     git -C "$DOTFILES_DIR" fetch origin
     git -C "$DOTFILES_DIR" reset --hard origin/main
     git -C "$DOTFILES_DIR" pull
-else
-    git clone "$REPO_URL" "$DOTFILES_DIR"
+    
 fi
 
 # Leer variables si no existen
