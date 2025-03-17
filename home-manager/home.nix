@@ -22,7 +22,6 @@ in
     lg = "lazygit";
   };
 
-  xdg.systemDirs.data = lib.mkIf isLinux [ "${config.home.homeDirectory}/.nix-profile/share/applications" ];
 
   home.packages = with pkgs; [
     awscli2
