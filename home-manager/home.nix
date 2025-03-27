@@ -35,8 +35,6 @@ in
     unzip
     neovim
     nerd-fonts.jetbrains-mono
-    libreoffice
-    jdk11
   ];
 
   home.file = { };
